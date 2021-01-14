@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Index HTML</title>
+    <script>
+    const testFetch = async function testFetch() {
+        const res = document.getElementById('stream-response');
+        res.innerHTML = '';
+        const response = await fetch("http://localhost:8080/content/stream", {mode: 'no-cors'});
+        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            res.innerHTML += '<p>' + value + '</p>';
+            console.log('Received', value);
+        }
+
+        console.log('Response fully received');
+    }
+    </script>
+</head>
+
+<body>
+<h3>Stream API</h3>
+<button onclick="testFetch()">Request</button>
+<div id="stream-response"></div>
+</body>
+
+</html>
